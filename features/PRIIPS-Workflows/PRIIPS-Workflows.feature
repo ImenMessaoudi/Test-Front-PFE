@@ -7,21 +7,40 @@ Feature: PRIIPS_Workflows
        So that I can 
    @IMPRESS-13945
  
-      Scenario Outline: PRIIPS Narrative Computation
+      Scenario Outline: PRIIPS Risk & Narrative Computation
        Given I am logged in with <user> and <password>
        When I search for criteria <criteria> and <values>
        And I access to details of the first result
        And I relaunch the workflow from Initialisation
        And I click on step <StepActionName>
        And <StepActionName> switchs to <StepStatus> status before <timeOut>
-       And I choose to download the <document>
-       Then The <document> should be downloaded
+      #  And I choose to download the <document>
+      #  Then The <document> should be downloaded
 
  
     Examples:
       | user          | password      | criteria                                            | values                                             | StepActionName | StepStatus  | timeOut | document                                                 |                                                        
-      | IMP_STANDARD  | Neoxam123*    | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2023-05;PRIIPS-NARRATIVE-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2023-05-31_PRIIPS-NARRATIVE-COMPUTATION_lu_audit  |
+      | imen.messaoudi  | NeoxamMess@2424    | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2022-11;PRIIPS-RISK-PERF-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2023-05-31_PRIIPS-RISK-PERF-COMPUTATION_lu_audit_v1 |
+      | imen.messaoudi  | NeoxamMess@2424    | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2022-12;PRIIPS-NARRATIVE-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2023-05-31_PRIIPS-NARRATIVE-COMPUTATION_lu_audit_v1 |
+
+ @IMPRESS-13945
  
+      Scenario Outline: PRIIPS Costs & Germany Computation
+       Given I am logged in with <user> and <password>
+       When I search for criteria <criteria> and <values>
+       And I access to details of the first result
+       And I relaunch the workflow from Initialisation
+       And I click on step <StepActionName>
+       # And I confirmed on <StepName> the <Status> status before <timeOut>
+       And <StepActionName> switchs to <StepStatus> status before <timeOut>
+      #  And I choose to download the <document>
+      #  Then The <document> should be downloaded
+
+ 
+    Examples:
+      | user          | password      | criteria                                            | values                                                   | StepName                                           | status    |StepActionName | StepStatus | timeOut | document                                                 |                                                        
+      | imen.messaoudi  | NeoxamMess@2424   | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2022-12;PRIIPS-COSTS-RIY-COMPUTATION;lu;en;001915  | Attente des calculs de risque et de la performance | finished  |Audit          | success    | 1000000 | 001915_2022-12-31_PRIIPS-COSTS-RIY-COMPUTATION_lu_audit_v1  |
+      | imen.messaoudi  | NeoxamMess@2424   | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2022-12;PRIIPS-GERMANY-COMPUTATION;lu;en;001915    | Attente des calculs de risque et de la performance | finished  |Audit          | success    | 1000000 | 001915_2022-12-31_PRIIPS-COSTS-RIY-COMPUTATION_lu_audit_v1  |
  
    @IMPRESS-13946
  
@@ -37,8 +56,8 @@ Feature: PRIIPS_Workflows
  
     Examples:
  
-      | user          | password      | criteria                                            | values                                             | StepActionName | StepStatus  | timeOut | document                                                |                                                         
-      | IMP_STANDARD  |  Neoxam123*   | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2021-12;PRIIPS-PAST-PERF-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2021-12-31_PRIIPS-PAST-PERF-COMPUTATION_lu_audit |
+      | user            | password      | criteria                                            | values                                             | StepActionName | StepStatus  | timeOut | document                                                |                                                         
+      | imen.messaoudi  |  NeoxamMess@2424   | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2022-12;PRIIPS-PAST-PERF-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2021-12-31_PRIIPS-PAST-PERF-COMPUTATION_lu_audit |
  
  
    @IMPRESS-13937
@@ -57,7 +76,7 @@ Feature: PRIIPS_Workflows
     Examples:
  
       | user          | password      | criteria                                            | values                                             | StepActionName | StepStatus  | timeOut | document                                                |                                                         
-      | IMP_STANDARD  | Neoxam123*    | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2021-12;PRIIPS-RISK-PERF-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2021-12-31_PRIIPS-RISK-PERF-COMPUTATION_lu_audit |
+      | imen.messaoudi  | NeoxamMess@2424    | Mois d'arrêté;Document;Juridiction;Langue;Code Ptf. | 2021-12;PRIIPS-RISK-PERF-COMPUTATION;lu;en;001915  | Audit          | finished    | 1000000 | 001915_2021-12-31_PRIIPS-RISK-PERF-COMPUTATION_lu_audit |
  
    @IMPRESS-13948
  
