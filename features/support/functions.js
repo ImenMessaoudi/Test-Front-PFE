@@ -1,6 +1,11 @@
 const { expect } = require("chai")
 const component = require("./components")
 const fs = require('fs')
+const { Client } = require('ssh2')
+const winston = require("winston")
+let { NodeSSH } = require("node-ssh")
+const shell = require("shelljs")
+const exec = require("node-ssh-exec")
 
 
 global.verifyDownloadedFile = async (DocPath) => {
@@ -98,4 +103,65 @@ global.changePrio = async (Priority,selector) => {
 
         return theOption.select(button) 
  }}
+
+
+}
+global.connectSSH = async () => {
+  try {
+    // Establish SSH connection
+    const sshConnection = new Client();
+    await new Promise((resolve, reject) => {
+       //appeler des gestionnaire d'evenements SSH
+        sshConnection.on('ready', resolve);
+        sshConnection.on('error', reject);
+        sshConnection.connect({
+            host: 'REFPROD-PRIIPS-TEST',
+            port: 22,
+            username: 'runner',
+            password: '^$@h9!o6N[<SExH73fDdByc4b21k|5',
+        });
+    })
+    return sshConnection;
+ 
+} catch (error) {
+    throw `Error during ssh connection: ${error}` 
+}
+ 
+}
+
+global.executeCommand = async(sshConnection, command, successMessage, failureMessage) => {
+  // Create a logger instance
+  const logger = winston.createLogger({
+  level: 'info', // Set log level (e.g., info, debug, error)
+  format: winston.format.simple(),
+  transports: [
+      new winston.transports.Console() // Log to the console
+  ]
+})
+return new Promise((resolve, reject) => {
+    sshConnection.exec(command, (err, stream) => {
+        if (err) {
+            reject(err);
+            sshConnection.end();
+            return;
+        }
+        let stdout = '';
+        let stderr = '';
+        stream.on('data', data => (stdout += data.toString()));
+        stream.stderr.on('data', data => (stderr += data.toString()));
+        stream.on('close', (code, signal) => {
+            if (stderr) {
+                console.error('STDERR:', stderr);
+                reject(new Error(failureMessage));
+            } else {                
+                  // Use the logger to log messages
+                  logger.log('info', 'STDOUT:', stdout);
+                  logger.log('info', successMessage);
+
+                resolve();
+            }
+            sshConnection.end();
+        });
+    });
+});
 }

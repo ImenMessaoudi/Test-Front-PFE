@@ -1,19 +1,58 @@
 {
-  "name": "test-front-pfe",
+  "name": "nx_impress_test",
   "version": "1.0.0",
-  "description": "Test Front  puppeteer",
+  "description": "impress test suite",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "config": {
+    "report": "IMPRESS"
   },
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "ci-test": "npx npm-run-all -c tag-changer-ci-parallel tag-ci-parallel alerting",
+    "tag-ci-test": "npx npm-run-all -c tag-changer-ci-parallel tag-ci-parallel alerting ",
+    "test": "npx npm-run-all -c folder-changer parallel alerting start serve",
+    "parallel": "cucumber-js --parallel 4 --retry 1 --retry-tag-filter @Instable --format json > ./json/report.json",
+    "folder-changer": "node folderChanger.js",
+    "ci-parallel": "cucumber-js --parallel 4  --retry 1 --retry-tag-filter @Instable --format json > ./json/report.json",
+    "report": "node report.js",
+    "tag-ci-parallel": "cucumber-js --parallel 4 --retry 1 --retry-tag-filter @Instable --format json > ./json/report.json",
+    "tag-changer-ci-parallel": "node tagChanger.js",
+    "serve": "npx http-server",
+    "start": "npx open-cli http://localhost:8080/html/",
+    "alerting": "node mailSender.js",
+    "jsdoc": "node ./node_modules/jsdoc/jsdoc.js features/visage/*/*.js"
+  },
   "dependencies": {
-    "axios": "^1.6.8",
-    "cheerio": "^1.0.0-rc.12",
-    "node-fetch": "^3.3.2",
-    "pdf-lib": "^1.17.1",
-    "puppeteer": "^22.7.1",
-    "walk": "^2.3.15"
+    "@cucumber/cucumber": "^8.10.0",
+    "axios": "^1.6.7",
+    "chai": "^4.2.0",
+    "chai-arrays": "^2.2.0",
+    "chalk": "^4.1.0",
+    "cucumber": "^6.0.7",
+    "downloads-folder": "1.0.2",
+    "find": "^0.3.0",
+    "fs-extra": "^9.0.1",
+    "http-server": "^14.1.1",
+    "js-base64": "^3.6.0",
+    "jsonfile": "^5.0.0",
+    "moment": "^2.29.1",
+    "node-ssh": "^13.1.0",
+    "node-ssh-exec": "^0.1.1",
+    "nodemailer": "^6.4.11",
+    "nodemailer-juice": "^1.0.1",
+    "open": "^8.4.2",
+    "prettier": "^2.1.2",
+    "puppeteer": "^18.2.1",
+    "replace-json-property": "^1.7.1",
+    "shelljs": "^0.8.5",
+    "ssh2": "^1.15.0",
+    "uuid": "^9.0.0",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^4.5.5",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.6",
+    "npm-run-all": "^4.1.5",
+    "open-cli": "^7.1.0"
   }
 }

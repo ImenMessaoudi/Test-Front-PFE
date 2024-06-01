@@ -139,10 +139,15 @@ var suggList = async (selector, value) => {
 }
 
 var advancedSearch = async (criteria, values) => {
+
+  //const selector = 'use[xlink\\:href="#nx-chevron"]'
+  //await click(selector)
   await ClickOnIcon('[*|href="#nx-chevron"]')
 
   let val_array = values.split(";")
   let crit_array = criteria.split(";")
+  //La  liste  recupere  plusieurs  d'ou cette  ecriture (label)
+  //let label_array = await page.$$(".advanced:not(.search-wrapper) label")
   let label_array = await page.$$(".advanced:not(.search-wrapper) label")
 
   for (let i = 0; i < crit_array.length; i++) {
@@ -151,6 +156,8 @@ var advancedSearch = async (criteria, values) => {
 
     for (let j = 0; j < label_array.length; j++) {
       let lab = label_array[j]
+     // labelText = page.$$(".advanced:not(.search-wrapper) label")   
+     //labelText.map(label => label.innerText)
       let labelText = await page.evaluate((lab) => lab.innerText, lab)
       let found = false
       if (labelText.toLowerCase() == theCriteria.toLowerCase()) {

@@ -1,26 +1,26 @@
-const puppeteer = require('puppeteer');
+var advancedSearch = async(critere, value) =>{
 
-(async () => {
-  // Launch the browser
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  const selector = 'use[xlink\\:href="#nx-chevron"]'
+  await click(selector)
 
-  // Navigate to the desired URL
-  await page.goto('https://example.com');
+  let array_val = values.split(";")
+  let array_cri = critere.split(";")
 
-  // Use evaluate to run JavaScript in the context of the page
-  await page.evaluate(() => {
-    // Create a new paragraph element
-    const newParagraph = document.createElement('p');
-    newParagraph.textContent = 'This is a new paragraph created with Puppeteer.';
+  let array_text = $$('.adavanced : not (.advanced wraper)label')
+  
+  for(let i=0; i<array_cri.lenght;i++){
+    let val= array_val[i]
+    let cri = array_cri[i]
 
-    // Append the new paragraph to the body
-    document.body.appendChild(newParagraph);
-  });
+    for(let i=0; i<array_text.lenght;i++){
 
-  // Optionally take a screenshot to verify the result
-  await page.screenshot({ path: 'example.png' });
+      let text = array_text[i]
+      
 
-  // Close the browser
-  await browser.close();
-})();
+
+    }
+
+  }
+  
+
+}

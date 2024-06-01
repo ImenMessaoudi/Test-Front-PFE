@@ -15,21 +15,36 @@ Before(async function (scenario) {
   scenarioName = scenario.pickle.name
   this.attach(new Date().toISOString())
 
-  let path = "http://nximpress-efa4-standardization/impress/#/"
+  let path = "https://refprod-priips-test.bams.corp/impress/#/"
 
   await page.goto(path)
-
-  const promise = page.evaluate(() => {
-    return new Promise((resolve, reject) => {
-      set("data.download_closing_months", 24)
-      resolve("Promise{<pending>}")
-    })
-  })
+  //Connexion SSH 
+  const sshConnection = await connectSSH()
+ 
+    const updateCommand = `docker exec -i postgres psql -U postgres -c "update data set value = '110' where path = 'data.download_closing_months';"`;
+    try {
+        await executeCommand(sshConnection, updateCommand, 'Psql command executed successfully', 'Psql command failed');
+    } catch (error) {
+       throw error
+    }
+  
 })
 
 After(async function () {
-  await page.evaluate(() => logout())
-  this.attach(new Date().toISOString())
+ 
+  let retry = 0
+  while (++retry <= 3) {
+    try {
+      await page.evaluate(() => logout())
+      break
+    } catch (e) {
+      if (retry === 5) throw e
+    }
+  } 
+await page.waitForTimeout(20000)
+ 
+this.attach(new Date().toISOString())
+ 
 })
 
 Given("I am logged out", async function () {
@@ -38,22 +53,31 @@ Given("I am logged out", async function () {
 })
 
 global.login = async (user, password) => {
-  let loginButtonselector = `.Connexion`
-  await page.waitForSelector(loginButtonselector)
-  await page.click(loginButtonselector)
-  let drowerSelector = `.m100-login-button`
-  await page.waitForSelector(drowerSelector)
-  if (user) await page.type("#email", user.toString())
-  if (password) await page.type("#password", password.toString())
-  const button = await page.$(".drawer button")
-  await button.evaluate((e) => e.click())
+  let logoSelector = `.login-pf-page-header img`
+  await page.waitForSelector(logoSelector,  { timeout: 60000 })
+ 
+  let usernameInput = `#username`
+  let passwordInput = `#password`
+ 
+  await page.waitForSelector(usernameInput)
+  await page.waitForSelector(passwordInput)
+ 
+  if (user) await page.type(usernameInput, user.toString())
+  if (password) await page.type(passwordInput, password.toString())
+ 
+  const loginForm = await page.$('#kc-form-login')
+  await loginForm.evaluate((form) => form.submit())
+ 
   try {
-    await page.waitForNavigation({ waitUntil: "load", timeout: 0 })
+    await page.waitForNavigation({ waitUntil: "load", timeout: 60000 });
   } catch (error) {
-    logger.error("login failure")
-    throw "Login Failure !"
+    logger.error("Login failure");
+    throw "Login Failure!";
   }
-}
+  await page.waitForSelector('.search-wrapper', { timeout: 60000 })
+
+ 
+};
 
 global.searchForCriteria = async (criteria, values) => {
   await component.Search.advancedSearch(criteria, values)
@@ -299,6 +323,7 @@ const CheckEventFileDownload = async (file_name) => {
 
 Given("I am logged in with {} and {}", async (user, password) => {
   await login(user, password, scenarioName)
+  // await login(user, password)
 })
 
 When("I search for criteria {} and {}", async (criteria, values) => {
@@ -645,23 +670,7 @@ When(
   }
 )
 
-const connectSSH = async (FinalReports, directory) => {
-  var config = {
-      host: "nximpress-automation-6-2",
-      port: "22",
-      username: "runner",
-      password: "runner",
-    },
-    command = `find ${directory} -name ${FinalReports}`
 
-  exec(config, command, function (error, response) {
-    if (error) {
-      throw error
-    }
-
-    console.log(response)
-  })
-}
 const displayedTotSteps = async (StepsTotal) => {
   let total = await page.$(".cell-steps.string")
 
